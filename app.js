@@ -15,6 +15,9 @@
   const listView = document.getElementById('view-list');
   const scratchView = document.getElementById('view-scratch');
   const matchGrid = document.getElementById('match-grid');
+  const loadingSpinner = document.getElementById('loading-spinner');
+  const errorMessage = document.getElementById('error-message');
+  const retryBtn = document.getElementById('retry-btn');
   const backBtn = document.getElementById('back-btn');
   const prevBtn = document.getElementById('prev-match');
   const nextBtn = document.getElementById('next-match');
@@ -34,11 +37,51 @@
   const resultPlayAgain = document.getElementById('result-play-again');
 
   // ── 初始化 ──
-  function init() {
-    // 過濾掉已經結束的比賽
-    activeMatches = MATCHES.filter(m => m.status !== 'finished');
-    renderMatchList();
-    bindNavigation();
+  async function init() {
+    try {
+      // 顯示 loading
+      loadingSpinner.classList.remove('hidden');
+      matchGrid.replaceChildren(); // 清空網格
+
+      // 嘗試從 API 抓取資料
+      const response = await fetch('/api/matches');
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+      
+      const apiMatches = await response.json();
+      
+      // 過濾掉已經結束的比賽，並將 UTC 時間轉換為本地時間
+      activeMatches = apiMatches
+        .filter(m => m.status !== 'finished')
+        .map(m => {
+          // m.time 現在是 UTC 的 ISO 字串，例如 "2026-06-11T20:00:00Z"
+          const dateObj = new Date(m.time);
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          const hours = String(dateObj.getHours()).padStart(2, '0');
+          const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+          
+          return {
+            ...m,
+            time: `${month}/${day} ${hours}:${minutes}`
+          };
+        });
+      
+      // 渲染畫面並綁定事件
+      renderMatchList();
+      if (!window.__navigationBound) {
+        bindNavigation();
+        window.__navigationBound = true;
+      }
+
+    } catch (error) {
+      console.error('API 讀取失敗:', error);
+      errorMessage.classList.remove('hidden');
+    } finally {
+      // 隱藏 loading
+      loadingSpinner.classList.add('hidden');
+    }
   }
 
   // ── 比賽列表渲染 ──
@@ -78,7 +121,12 @@
       const teamARow = _createTeamRow(match.teamA);
       const vsDiv = document.createElement('div');
       vsDiv.className = 'match-vs';
-      vsDiv.textContent = 'VS';
+      if (match.status === 'live' && match.actualScore) {
+        vsDiv.textContent = match.actualScore;
+        vsDiv.classList.add('match-live-score');
+      } else {
+        vsDiv.textContent = 'VS';
+      }
       const teamBRow = _createTeamRow(match.teamB);
 
       teams.appendChild(teamARow);
@@ -117,14 +165,32 @@
     });
   }
 
+  function _createFlagElement(team, className) {
+    if (team.crest && team.crest.startsWith('http')) {
+      const img = document.createElement('img');
+      img.className = className;
+      img.src = team.crest;
+      img.alt = team.name;
+      // 確保圖片大小與文字對齊
+      img.style.width = '1.2em';
+      img.style.height = '1.2em';
+      img.style.objectFit = 'contain';
+      img.style.display = 'inline-block';
+      return img;
+    } else {
+      const span = document.createElement('span');
+      span.className = className;
+      span.textContent = team.flag || '🏳️';
+      span.setAttribute('aria-hidden', 'true');
+      return span;
+    }
+  }
+
   function _createTeamRow(team) {
     const row = document.createElement('div');
     row.className = 'team-row';
 
-    const flag = document.createElement('span');
-    flag.className = 'team-flag';
-    flag.textContent = team.flag;
-    flag.setAttribute('aria-hidden', 'true');
+    const flag = _createFlagElement(team, 'team-flag');
 
     const name = document.createElement('span');
     name.className = 'team-name';
@@ -191,10 +257,7 @@
     const el = document.createElement('div');
     el.className = 'scratch-team';
 
-    const flag = document.createElement('span');
-    flag.className = 'scratch-team-flag';
-    flag.textContent = team.flag;
-    flag.setAttribute('aria-hidden', 'true');
+    const flag = _createFlagElement(team, 'scratch-team-flag');
 
     const name = document.createElement('span');
     name.className = 'scratch-team-name';
@@ -203,6 +266,60 @@
     el.appendChild(flag);
     el.appendChild(name);
     return el;
+  }
+
+  const GRID_SIZE = 10; // N x N 刮刮樂尺寸
+
+  function generateScratchGrid(match, size) {
+    const totalCells = size * size;
+    
+    // 簡易的比分機率分佈
+    const scoreDistribution = [
+      { score: '1-0', weight: 15 },
+      { score: '0-1', weight: 15 },
+      { score: '1-1', weight: 13 },
+      { score: '0-0', weight: 10 },
+      { score: '2-0', weight: 9 },
+      { score: '0-2', weight: 9 },
+      { score: '2-1', weight: 8 },
+      { score: '1-2', weight: 8 },
+      { score: '2-2', weight: 5 },
+      { score: '3-0', weight: 2 },
+      { score: '0-3', weight: 2 },
+      { score: '3-1', weight: 2 },
+      { score: '1-3', weight: 2 }
+    ];
+
+    const pool = [];
+    scoreDistribution.forEach(item => {
+      const count = Math.round((item.weight / 100) * totalCells);
+      for (let i = 0; i < count; i++) {
+        pool.push(item.score);
+      }
+    });
+
+    // 填補或裁切確保數量正確
+    while (pool.length < totalCells) pool.push('1-1');
+    if (pool.length > totalCells) pool.length = totalCells;
+
+    // 洗牌 (Fisher-Yates)
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+
+    // 轉換為 2D 陣列
+    const grid = [];
+    let index = 0;
+    for (let r = 0; r < size; r++) {
+      const row = [];
+      for (let c = 0; c < size; c++) {
+        row.push(pool[index++]);
+      }
+      grid.push(row);
+    }
+
+    return grid;
   }
 
   function _initScratchCard(match) {
@@ -269,6 +386,11 @@
   // ── 導覽 ──
   function bindNavigation() {
     backBtn.addEventListener('click', showListView);
+
+    retryBtn.addEventListener('click', () => {
+      errorMessage.classList.add('hidden');
+      init();
+    });
 
     prevBtn.addEventListener('click', () => {
       const currentIndex = activeMatches.findIndex(m => m.id === currentMatchId);

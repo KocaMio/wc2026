@@ -28,6 +28,20 @@
     <section class="view active" id="view-list" aria-label="比賽列表">
       <h1 class="section-title" id="list-title">16 強賽 · 預測刮刮樂</h1>
       <p class="section-subtitle" id="list-subtitle">選擇一場比賽，刮開一格揭曉你的預測比分。每次只有一個機會！</p>
+      
+      <!-- Loading State -->
+      <div id="loading-spinner" class="loading-spinner" aria-live="polite">
+        <div class="spinner-circle"></div>
+        <p>正在載入最新賽程...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="error-message" class="error-message hidden" aria-live="assertive">
+        <span aria-hidden="true">⚠️</span>
+        <p>暫時無法取得賽程，請稍後再試。</p>
+        <button id="retry-btn" class="btn btn-ghost">重試</button>
+      </div>
+
       <div class="match-grid" id="match-grid" role="list"></div>
     </section>
 
@@ -102,7 +116,6 @@
   </footer>
 
   <!-- Scripts (order matters) -->
-  <script src="matches.js"></script>
   <script src="scratch-card.js"></script>
   <script src="app.js"></script>
 
