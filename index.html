@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026 世界盃 16 強 · 刮刮樂預測</title>
+  <meta name="description" content="用刮刮樂的方式預測 2026 FIFA 世界盃 16 強賽每場比賽的結果！選擇比賽，刮開格子，揭曉比分。">
+  <meta name="theme-color" content="#1a1a1a">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header" id="app-header">
+    <div class="container header-inner">
+      <div class="logo" id="logo">
+        <span class="logo-icon" aria-hidden="true">⚽</span>
+        <span class="logo-text">WC<span>2026</span> 刮刮樂</span>
+      </div>
+      <span class="header-badge" id="header-badge">16 強賽</span>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Match List View -->
+    <section class="view active" id="view-list" aria-label="比賽列表">
+      <h1 class="section-title" id="list-title">16 強賽 · 預測刮刮樂</h1>
+      <p class="section-subtitle" id="list-subtitle">選擇一場比賽，刮開一格揭曉你的預測比分。每次只有一個機會！</p>
+      <div class="match-grid" id="match-grid" role="list"></div>
+    </section>
+
+    <!-- Scratch Card View -->
+    <section class="view" id="view-scratch" aria-label="刮刮樂遊戲">
+
+      <!-- Header -->
+      <div class="scratch-header" id="scratch-header">
+        <button class="back-btn" id="back-btn" aria-label="返回比賽列表">
+          <span aria-hidden="true">←</span> 返回
+        </button>
+        <div class="scratch-match-info">
+          <h1 class="scratch-match-title" id="scratch-match-title"></h1>
+          <p class="scratch-match-detail" id="scratch-match-detail"></p>
+        </div>
+        <div class="match-nav" id="match-nav">
+          <button class="nav-btn" id="prev-match" aria-label="上一場比賽">
+            <span aria-hidden="true">‹</span>
+          </button>
+          <button class="nav-btn" id="next-match" aria-label="下一場比賽">
+            <span aria-hidden="true">›</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Teams Display -->
+      <div class="scratch-teams-display" id="scratch-teams"></div>
+      <div class="score-legend" id="score-legend">
+        <span class="score-legend-text">選擇任意一格刮開！左邊數字 = <strong id="legend-team-a">隊伍A</strong> 的得分，右邊數字 = <strong id="legend-team-b">隊伍B</strong> 的得分</span>
+      </div>
+
+      <!-- Scratch Card -->
+      <div class="scratch-card-wrapper" id="scratch-card-wrapper">
+        <div class="scratch-card-label">
+          <span class="scratch-card-label-text">
+            <span aria-hidden="true">🎯</span> 點選一格揭曉預測比分
+          </span>
+        </div>
+        <div class="scratch-canvas-container" id="scratch-canvas"></div>
+        <div class="actions-bar" id="actions-bar">
+          <button class="btn btn-ghost" id="reset-btn">
+            <span aria-hidden="true">🔄</span> 重新來一局
+          </button>
+        </div>
+      </div>
+
+      <!-- Result Overlay -->
+      <div class="result-overlay" id="result-overlay" aria-live="polite">
+        <div class="result-card" id="result-card">
+          <div class="result-emoji" aria-hidden="true">⚽</div>
+          <div class="result-header">預測結果</div>
+          <div class="result-time" id="result-time"></div>
+          <div class="result-teams-row">
+            <span class="result-team" id="result-team-a"></span>
+            <span class="result-score" id="result-score"></span>
+            <span class="result-team" id="result-team-b"></span>
+          </div>
+          <div class="result-label" id="result-label"></div>
+          <button class="btn btn-accent result-btn" id="result-play-again">
+            <span aria-hidden="true">🔄</span> 再來一局
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer" id="app-footer">
+    <p class="footer-text">2026 FIFA World Cup™ 刮刮樂預測遊戲 · 僅供娛樂用途</p>
+  </footer>
+
+  <!-- Scripts (order matters) -->
+  <script src="matches.js"></script>
+  <script src="scratch-card.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
