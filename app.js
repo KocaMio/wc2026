@@ -104,12 +104,12 @@
 
       const matchNum = document.createElement('span');
       matchNum.className = 'match-number';
-      matchNum.textContent = `第 ${match.id} 場`;
+      matchNum.textContent = `Match ${match.id}`;
 
       const status = document.createElement('span');
       status.className = `match-status ${match.status}`;
-      status.textContent = match.status === 'finished' ? '已結束'
-        : match.status === 'live' ? '進行中' : '即將開始';
+      status.textContent = match.status === 'finished' ? 'Finished'
+        : match.status === 'live' ? 'Live' : 'Upcoming';
 
       meta.appendChild(matchNum);
       meta.appendChild(status);
@@ -211,7 +211,7 @@
 
     // 更新標題
     scratchTitle.textContent = `${match.teamA.name} vs ${match.teamB.name}`;
-    scratchDetail.textContent = `16 強賽 · 第 ${match.id} 場 · ${match.time}`;
+    scratchDetail.textContent = `Round of 16 · Match ${match.id} · ${match.time}`;
 
     // 更新隊伍展示
     _renderTeamsDisplay(match);
@@ -365,13 +365,13 @@
 
     // 設定結果標籤
     if (scoreA > scoreB) {
-      resultLabel.textContent = `${match.teamA.name} 獲勝！`;
+      resultLabel.textContent = `${match.teamA.name} Win!`;
       resultLabel.className = 'result-label result-win';
     } else if (scoreB > scoreA) {
-      resultLabel.textContent = `${match.teamB.name} 獲勝！`;
+      resultLabel.textContent = `${match.teamB.name} Win!`;
       resultLabel.className = 'result-label result-win';
     } else {
-      resultLabel.textContent = '平局！進入加時 / PK';
+      resultLabel.textContent = 'Draw! Extra Time / Penalties';
       resultLabel.className = 'result-label result-draw';
     }
 
