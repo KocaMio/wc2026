@@ -1,4 +1,4 @@
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 
   if (!API_KEY) {
@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
     // 世界盃 API 會回傳所有賽事，我們可以根據 stage 或 status 挑選
     // 這裡我們示範如何轉換格式以符合前端原本的需求
     const formattedMatches = data.matches
-      // 可選：如果你只要特定階段，可以加上 filter 例如 .filter(m => m.stage === 'LAST_16')
+      .filter(m => m.stage !== 'GROUP_STAGE')
       .map((match, index) => {
         // Football-Data.org 的狀態：SCHEDULED, TIMED, IN_PLAY, PAUSED, FINISHED, SUSPENDED, POSTPONED, CANCELLED, AWARDED
         let appStatus = 'upcoming';
@@ -35,7 +35,8 @@ module.exports = async function handler(req, res) {
         // 我們目前前端用 Emoji 顯示國旗，API 通常給圖片網址(crest)。
         // 為了簡單兼容，這裡先給個預設 Emoji，進階可將前端改為顯示 crest 圖片。
         return {
-          id: index + 1, // 改為直接使用順序編號 (1, 2, 3...)，而不是 API 給的超長流水號
+          id: match.id, // 使用真實 API 的 ID，因為我們過濾掉了小組賽，流水號會亂掉
+          stage: match.stage,
           teamA: {
             name: match.homeTeam?.name || 'TBD',
             code: match.homeTeam?.tla || 'TBD',

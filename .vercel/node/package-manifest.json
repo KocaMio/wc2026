@@ -1,0 +1,73 @@
+{
+  "version": "20260304",
+  "runtime": "node",
+  "framework": "vite",
+  "runtimeVersion": {
+    "resolved": "24"
+  },
+  "dependencies": [
+    {
+      "name": "@types/react",
+      "type": "direct",
+      "scopes": [
+        "dev"
+      ],
+      "requested": "^19.2.17",
+      "resolved": ""
+    },
+    {
+      "name": "@types/react-dom",
+      "type": "direct",
+      "scopes": [
+        "dev"
+      ],
+      "requested": "^19.2.3",
+      "resolved": ""
+    },
+    {
+      "name": "@vitejs/plugin-react",
+      "type": "direct",
+      "scopes": [
+        "dev"
+      ],
+      "requested": "^6.0.3",
+      "resolved": ""
+    },
+    {
+      "name": "oxlint",
+      "type": "direct",
+      "scopes": [
+        "dev"
+      ],
+      "requested": "^1.71.0",
+      "resolved": ""
+    },
+    {
+      "name": "react",
+      "type": "direct",
+      "scopes": [
+        "prod"
+      ],
+      "requested": "^19.2.7",
+      "resolved": ""
+    },
+    {
+      "name": "react-dom",
+      "type": "direct",
+      "scopes": [
+        "prod"
+      ],
+      "requested": "^19.2.7",
+      "resolved": ""
+    },
+    {
+      "name": "vite",
+      "type": "direct",
+      "scopes": [
+        "dev"
+      ],
+      "requested": "^8.1.1",
+      "resolved": ""
+    }
+  ]
+}

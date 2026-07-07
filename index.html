@@ -1,123 +1,13 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2026 World Cup Predictor</title>
-  <meta name="description" content="Predict the 2026 FIFA World Cup matches with a scratch card! Select a match, scratch to reveal the score.">
-  <meta name="theme-color" content="#1a1a1a">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-  <!-- Header -->
-  <header class="app-header" id="app-header">
-    <div class="container header-inner">
-      <div class="logo" id="logo">
-        <span class="logo-icon" aria-hidden="true">⚽</span>
-        <span class="logo-text">WC<span>2026</span> Predictor</span>
-      </div>
-      <span class="header-badge" id="header-badge">Round of 16</span>
-    </div>
-  </header>
-
-  <main class="container">
-
-    <!-- Match List View -->
-    <section class="view active" id="view-list" aria-label="Match List">
-      <h1 class="section-title" id="list-title">Round of 16 · Scratch Predictor</h1>
-      <p class="section-subtitle" id="list-subtitle">Select a match and scratch a cell to reveal your score prediction. You only get one chance!</p>
-      
-      <!-- Loading State -->
-      <div id="loading-spinner" class="loading-spinner hidden" aria-live="polite">
-        <div class="spinner-circle"></div>
-        <p>Loading latest matches...</p>
-      </div>
-
-      <!-- Error State -->
-      <div id="error-message" class="error-message hidden" aria-live="assertive">
-        <span aria-hidden="true">⚠️</span>
-        <p>Cannot fetch matches, please try again later.</p>
-        <button id="retry-btn" class="btn btn-ghost">Retry</button>
-      </div>
-
-      <div class="match-grid" id="match-grid" role="list"></div>
-    </section>
-
-    <!-- Scratch Card View -->
-    <section class="view" id="view-scratch" aria-label="Scratch Game">
-
-      <!-- Header -->
-      <div class="scratch-header" id="scratch-header">
-        <button class="back-btn" id="back-btn" aria-label="Back to List">
-          <span aria-hidden="true">←</span> Back
-        </button>
-        <div class="scratch-match-info">
-          <h1 class="scratch-match-title" id="scratch-match-title"></h1>
-          <p class="scratch-match-detail" id="scratch-match-detail"></p>
-        </div>
-        <div class="match-nav" id="match-nav">
-          <button class="nav-btn" id="prev-match" aria-label="Previous Match">
-            <span aria-hidden="true">‹</span>
-          </button>
-          <button class="nav-btn" id="next-match" aria-label="Next Match">
-            <span aria-hidden="true">›</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Teams Display -->
-      <div class="scratch-teams-display" id="scratch-teams"></div>
-      <div class="score-legend" id="score-legend">
-        <span class="score-legend-text">Scratch any cell! Left number = <strong id="legend-team-a">Team A</strong> score, Right number = <strong id="legend-team-b">Team B</strong> score</span>
-      </div>
-
-      <!-- Scratch Card -->
-      <div class="scratch-card-wrapper" id="scratch-card-wrapper">
-        <div class="scratch-card-label">
-          <span class="scratch-card-label-text">
-            <span aria-hidden="true">🎯</span> Click a cell to reveal your prediction
-          </span>
-        </div>
-        <div class="scratch-canvas-container" id="scratch-canvas"></div>
-        <div class="scratch-actions" id="scratch-actions">
-          <button class="btn btn-ghost" id="reset-btn">
-            <span aria-hidden="true">🔄</span> Reset Game
-          </button>
-        </div>
-      </div>
-
-      <!-- Result Overlay -->
-      <div class="result-overlay" id="result-overlay" aria-live="polite">
-        <div class="result-card" id="result-card">
-          <div class="result-emoji" aria-hidden="true">⚽</div>
-          <div class="result-header">Prediction Result</div>
-          <div class="result-time" id="result-time"></div>
-          <div class="result-teams-row">
-            <span class="result-team" id="result-team-a"></span>
-            <span class="result-score" id="result-score"></span>
-            <span class="result-team" id="result-team-b"></span>
-          </div>
-          <div class="result-label" id="result-label"></div>
-          <button class="btn btn-accent result-btn" id="result-play-again">
-            <span aria-hidden="true">🔄</span> Play Again
-          </button>
-        </div>
-      </div>
-
-    </section>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="app-footer" id="app-footer">
-    <p class="footer-text">2026 FIFA World Cup™ Scratch Predictor · For entertainment purposes only</p>
-  </footer>
-
-  <!-- Scripts (order matters) -->
-  <script src="scratch-card.js"></script>
-  <script src="app.js"></script>
-
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WC2026 Predictor</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
