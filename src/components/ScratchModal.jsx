@@ -53,6 +53,34 @@ export default function ScratchModal({ match, onClose }) {
 
 
 
+  const handleDownload = async () => {
+    if (!cardRef.current) return;
+    try {
+      const filterNodes = (node) => {
+        if (!node || !node.classList) return true;
+        if (node.classList.contains('action-buttons') || node.classList.contains('close-btn')) return false;
+        if (node.classList.contains('team-crest')) return false;
+        return true;
+      };
+
+      const dataUrl = await toPng(cardRef.current, { 
+        cacheBust: true, 
+        backgroundColor: '#1a1a1a',
+        filter: filterNodes
+      });
+
+      const link = document.createElement('a');
+      link.download = `WC2026_Prediction_${match.teamA.code}_vs_${match.teamB.code}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Failed to generate image', err);
+      alert('Failed to save the image. Please try again later.');
+    }
+  };
+
   const handleShare = async () => {
     const text = `🏆 I predict the final score for ${match.teamA.name} vs ${match.teamB.name} will be ${finalScore}!\n\nGenerate your own prediction for the World Cup 2026! ⚽`;
     const title = 'WC2026 Prediction';
@@ -62,6 +90,26 @@ export default function ScratchModal({ match, onClose }) {
       let fileToShare = null;
 
 
+
+      // 1. Generate the blob image
+      if (cardRef.current) {
+        const filterNodes = (node) => {
+          if (!node || !node.classList) return true;
+          if (node.classList.contains('action-buttons') || node.classList.contains('close-btn')) return false;
+          if (node.classList.contains('team-crest')) return false;
+          return true;
+        };
+
+        const blob = await toBlob(cardRef.current, { 
+          cacheBust: true, 
+          backgroundColor: '#1a1a1a',
+          filter: filterNodes
+        });
+
+        if (blob) {
+          fileToShare = new File([blob], 'prediction.png', { type: 'image/png' });
+        }
+      }
 
       // 2. Check if share with files is supported
       if (navigator.share && fileToShare && navigator.canShare && navigator.canShare({ files: [fileToShare] })) {
@@ -122,12 +170,18 @@ export default function ScratchModal({ match, onClose }) {
         {/* Teams Display */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '32px', marginBottom: '32px', background: '#222', padding: '16px', borderRadius: '12px', border: '1px solid #333' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            {match.teamA.crest ? <img src={match.teamA.crest} alt={match.teamA.code} style={{ width: '48px', height: '48px', objectFit: 'contain' }} /> : <span style={{ fontSize: '32px' }}>{match.teamA.flag}</span>}
+            <div style={{ position: 'relative', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ position: 'absolute', fontSize: '32px' }}>{match.teamA.flag}</span>
+              {match.teamA.crest && <img className="team-crest" src={match.teamA.crest} alt={match.teamA.code} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', background: '#222', zIndex: 1 }} />}
+            </div>
             <span style={{ fontWeight: 'bold', fontSize: '18px', textAlign: 'center' }}>{match.teamA.name}</span>
           </div>
           <div style={{ fontSize: '24px', fontWeight: '900', color: '#555', letterSpacing: '2px' }}>VS</div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            {match.teamB.crest ? <img src={match.teamB.crest} alt={match.teamB.code} style={{ width: '48px', height: '48px', objectFit: 'contain' }} /> : <span style={{ fontSize: '32px' }}>{match.teamB.flag}</span>}
+            <div style={{ position: 'relative', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ position: 'absolute', fontSize: '32px' }}>{match.teamB.flag}</span>
+              {match.teamB.crest && <img className="team-crest" src={match.teamB.crest} alt={match.teamB.code} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', background: '#222', zIndex: 1 }} />}
+            </div>
             <span style={{ fontWeight: 'bold', fontSize: '18px', textAlign: 'center' }}>{match.teamB.name}</span>
           </div>
         </div>
@@ -169,6 +223,9 @@ export default function ScratchModal({ match, onClose }) {
                   </button>
                   <button onClick={handleShare} className="primary-btn share-btn">
                     <Share2 size={16} /> Share
+                  </button>
+                  <button onClick={handleDownload} className="primary-btn download-btn">
+                    <Download size={16} /> Save
                   </button>
                 </div>
               </div>
