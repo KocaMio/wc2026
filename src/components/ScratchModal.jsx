@@ -20,6 +20,24 @@ function drawRandomScore() {
   return '1 - 1';
 }
 
+const fifaToIso = {
+  QAT: 'qa', ECU: 'ec', SEN: 'sn', NED: 'nl',
+  ENG: 'gb-eng', IRN: 'ir', USA: 'us', WAL: 'gb-wls',
+  ARG: 'ar', KSA: 'sa', MEX: 'mx', POL: 'pl',
+  FRA: 'fr', AUS: 'au', DEN: 'dk', TUN: 'tn',
+  ESP: 'es', CRC: 'cr', GER: 'de', JPN: 'jp',
+  BEL: 'be', CAN: 'ca', MAR: 'ma', CRO: 'hr',
+  BRA: 'br', SRB: 'rs', SUI: 'ch', CMR: 'cm',
+  POR: 'pt', GHA: 'gh', URU: 'uy', KOR: 'kr',
+  ITA: 'it', SWE: 'se', CHI: 'cl', COL: 'co'
+};
+
+function getFlagNode(code) {
+  const iso = fifaToIso[code];
+  if (!iso) return <span style={{ position: 'absolute', fontSize: '32px' }}>⚽</span>;
+  return <img src={`https://flagcdn.com/w80/${iso}.png`} crossOrigin="anonymous" alt={code} style={{ position: 'absolute', width: '40px', height: '40px', objectFit: 'contain' }} />;
+}
+
 export default function ScratchModal({ match, onClose }) {
   const [status, setStatus] = useState('idle'); // 'idle', 'animating', 'revealed'
   const [displayedScore, setDisplayedScore] = useState('0 - 0');
@@ -56,6 +74,7 @@ export default function ScratchModal({ match, onClose }) {
   const handleDownload = async () => {
     if (!cardRef.current) return;
     try {
+      cardRef.current.classList.add('disable-animations');
       const filterNodes = (node) => {
         if (!node || !node.classList) return true;
         if (node.classList.contains('action-buttons') || node.classList.contains('close-btn')) return false;
@@ -78,6 +97,8 @@ export default function ScratchModal({ match, onClose }) {
     } catch (err) {
       console.error('Failed to generate image', err);
       alert('Failed to save the image. Please try again later.');
+    } finally {
+      cardRef.current.classList.remove('disable-animations');
     }
   };
 
@@ -93,6 +114,7 @@ export default function ScratchModal({ match, onClose }) {
 
       // 1. Generate the blob image
       if (cardRef.current) {
+        cardRef.current.classList.add('disable-animations');
         const filterNodes = (node) => {
           if (!node || !node.classList) return true;
           if (node.classList.contains('action-buttons') || node.classList.contains('close-btn')) return false;
@@ -105,6 +127,7 @@ export default function ScratchModal({ match, onClose }) {
           backgroundColor: '#1a1a1a',
           filter: filterNodes
         });
+        cardRef.current.classList.remove('disable-animations');
 
         if (blob) {
           fileToShare = new File([blob], 'prediction.png', { type: 'image/png' });
@@ -171,7 +194,7 @@ export default function ScratchModal({ match, onClose }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '32px', marginBottom: '32px', background: '#222', padding: '16px', borderRadius: '12px', border: '1px solid #333' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
             <div style={{ position: 'relative', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ position: 'absolute', fontSize: '32px' }}>{match.teamA.flag}</span>
+              {getFlagNode(match.teamA.code)}
               {match.teamA.crest && <img className="team-crest" src={match.teamA.crest} alt={match.teamA.code} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', background: '#222', zIndex: 1 }} />}
             </div>
             <span style={{ fontWeight: 'bold', fontSize: '18px', textAlign: 'center' }}>{match.teamA.name}</span>
@@ -179,7 +202,7 @@ export default function ScratchModal({ match, onClose }) {
           <div style={{ fontSize: '24px', fontWeight: '900', color: '#555', letterSpacing: '2px' }}>VS</div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
             <div style={{ position: 'relative', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ position: 'absolute', fontSize: '32px' }}>{match.teamB.flag}</span>
+              {getFlagNode(match.teamB.code)}
               {match.teamB.crest && <img className="team-crest" src={match.teamB.crest} alt={match.teamB.code} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', background: '#222', zIndex: 1 }} />}
             </div>
             <span style={{ fontWeight: 'bold', fontSize: '18px', textAlign: 'center' }}>{match.teamB.name}</span>
@@ -234,6 +257,9 @@ export default function ScratchModal({ match, onClose }) {
         </div>
 
         <style>{`
+          .disable-animations, .disable-animations * {
+            animation: none !important;
+          }
           .goal-btn {
             background: linear-gradient(135deg, #22c55e, #16a34a);
             color: #fff;
