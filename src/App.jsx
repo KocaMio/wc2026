@@ -71,9 +71,6 @@ function App() {
           <span style={{ fontSize: '28px' }}>⚽</span>
           <h1 style={{ margin: 0, fontSize: '24px', color: 'white', fontWeight: 'bold' }}>WC<span style={{ color: '#ff4d4d' }}>2026</span> Predictor</h1>
         </div>
-        <span style={{ background: '#333', color: '#ff4d4d', padding: '6px 12px', borderRadius: '99px', fontSize: '14px', fontWeight: '500' }}>
-          Knockout Stage
-        </span>
       </header>
 
       <main>
