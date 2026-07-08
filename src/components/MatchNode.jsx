@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Clock, CheckCircle, Lock } from 'lucide-react';
 
 const MatchNode = ({ data }) => {
   const { match, onPredict } = data;
+  const [showToast, setShowToast] = useState(false);
+
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => setShowToast(false), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
 
   const isFinished = match.status === 'finished';
   const isLive = match.status === 'live';
   const isUpcoming = match.status === 'upcoming';
+  const isTBD = match.teamA.code === 'TBD' || match.teamB.code === 'TBD';
 
   const getTheme = () => {
     if (isFinished) return { bg: '#111', border: '#333', shadow: 'none', status: '#666', text: '#555', hoverBorder: '#333' };
@@ -21,6 +30,10 @@ const MatchNode = ({ data }) => {
     <div 
       className={`match-node ${isFinished ? 'finished' : 'upcoming'} ${isLive ? 'live' : ''}`}
       onClick={() => {
+        if (isTBD) {
+          setShowToast(true);
+          return;
+        }
         if (!isFinished && onPredict) {
           onPredict(match);
         }
@@ -32,7 +45,7 @@ const MatchNode = ({ data }) => {
         padding: '16px',
         width: '280px',
         color: theme.text,
-        cursor: isFinished ? 'not-allowed' : 'pointer',
+        cursor: (isFinished || isTBD) ? 'not-allowed' : 'pointer',
         boxShadow: theme.shadow,
         opacity: isFinished ? 0.5 : 1,
         transition: 'all 0.3s ease',
@@ -41,14 +54,14 @@ const MatchNode = ({ data }) => {
         overflow: 'hidden'
       }}
       onMouseEnter={(e) => {
-        if (!isFinished) {
+        if (!isFinished && !isTBD) {
           e.currentTarget.style.transform = 'translateY(-3px)';
           e.currentTarget.style.borderColor = theme.hoverBorder;
           e.currentTarget.style.boxShadow = isLive ? '0 0 25px rgba(255, 77, 77, 0.6)' : '0 8px 25px rgba(59, 130, 246, 0.4)';
         }
       }}
       onMouseLeave={(e) => {
-        if (!isFinished) {
+        if (!isFinished && !isTBD) {
           e.currentTarget.style.transform = 'translateY(0)';
           e.currentTarget.style.borderColor = theme.border;
           e.currentTarget.style.boxShadow = theme.shadow;
@@ -92,6 +105,30 @@ const MatchNode = ({ data }) => {
       </div>
 
       <Handle type="source" position={Position.Right} style={{ background: '#666', width: '8px', height: '8px' }} />
+
+      {/* Inline Toast for TBD */}
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        background: 'rgba(0, 0, 0, 0.85)',
+        color: '#fff',
+        padding: '8px 16px',
+        borderRadius: '8px',
+        fontSize: '13px',
+        fontWeight: 'bold',
+        whiteSpace: 'nowrap',
+        pointerEvents: 'none',
+        opacity: showToast ? 1 : 0,
+        visibility: showToast ? 'visible' : 'hidden',
+        transition: 'all 0.2s ease-in-out',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.4)',
+        backdropFilter: 'blur(4px)',
+        zIndex: 50
+      }}>
+        Teams not yet determined
+      </div>
     </div>
   );
 };

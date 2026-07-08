@@ -165,56 +165,56 @@ export default function ScratchModal({ match, onClose }) {
   };
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', 
-      alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px',
-      backdropFilter: 'blur(8px)'
-    }}>
+    <div 
+      className="modal-overlay" 
+      onClick={onClose}
+      aria-label="Close prediction modal"
+      role="dialog"
+      aria-modal="true"
+    >
       <div 
         ref={cardRef}
-        style={{
-          background: '#1a1a1a', borderRadius: '16px', padding: '32px 24px', width: '100%', 
-          maxWidth: '500px', border: '1px solid #333', position: 'relative', color: '#fff',
-          fontFamily: 'system-ui, sans-serif'
-        }}
+        className="modal-card"
+        onClick={(e) => e.stopPropagation()}
       >
         <button 
           onClick={onClose}
           className="close-btn"
-          style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: '#999', cursor: 'pointer', padding: '4px' }}
+          aria-label="Close"
         >
           <X size={24} />
         </button>
 
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: '24px' }}>Predictor</h2>
-          <p style={{ margin: '0', fontSize: '14px', color: '#888' }}>{match.stage.replace(/_/g, ' ')}</p>
+        <div className="header-section">
+          <h2>Predictor</h2>
+          <p>{match.stage.replace(/_/g, ' ')}</p>
         </div>
 
         {/* Teams Display */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '32px', marginBottom: '32px', background: '#222', padding: '16px', borderRadius: '12px', border: '1px solid #333' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            <div style={{ position: 'relative', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="team-display">
+          <div className="team">
+            <div className="team-flag">
               {getFlagNode(match.teamA.code)}
-              {match.teamA.crest && <img className="team-crest" src={match.teamA.crest} alt={match.teamA.code} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', background: '#222', zIndex: 1 }} />}
+              {match.teamA.crest && <img className="team-crest" src={match.teamA.crest} alt={match.teamA.code} />}
             </div>
-            <span style={{ fontWeight: 'bold', fontSize: '18px', textAlign: 'center' }}>{match.teamA.name}</span>
+            <span className="team-name">{match.teamA.name}</span>
           </div>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#555', letterSpacing: '2px' }}>VS</div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            <div style={{ position: 'relative', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="vs-divider">VS</div>
+          <div className="team">
+            <div className="team-flag">
               {getFlagNode(match.teamB.code)}
-              {match.teamB.crest && <img className="team-crest" src={match.teamB.crest} alt={match.teamB.code} style={{ position: 'relative', width: '100%', height: '100%', objectFit: 'contain', background: '#222', zIndex: 1 }} />}
+              {match.teamB.crest && <img className="team-crest" src={match.teamB.crest} alt={match.teamB.code} />}
             </div>
-            <span style={{ fontWeight: 'bold', fontSize: '18px', textAlign: 'center' }}>{match.teamB.name}</span>
+            <span className="team-name">{match.teamB.name}</span>
           </div>
         </div>
 
-        <div style={{ minHeight: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="interactive-area" aria-live="polite">
           {status === 'idle' && (
             <button 
               onClick={handleGoalClick}
               className="goal-btn"
+              aria-label="Reveal Prediction"
             >
               <Zap size={24} className="bolt" />
               <span>GOAL</span>
@@ -233,22 +233,22 @@ export default function ScratchModal({ match, onClose }) {
             const isDraw = s1 === s2;
             const winner = isDraw ? null : (s1 > s2 ? match.teamA.name : match.teamB.name);
             const resultLabel = isDraw ? "It's a Draw!" : `${winner} Wins!`;
-            const resultColor = isDraw ? '#c8a84e' : '#22c55e'; // Gold or Green
+            const resultColorClass = isDraw ? 'result-draw' : 'result-win';
 
             return (
-              <div style={{ animation: 'fadeInUp 0.5s ease-out forwards', textAlign: 'center', marginTop: '16px', width: '100%' }}>
-                <div style={{ fontSize: '24px', fontWeight: '900', color: resultColor, textShadow: `0 0 15px ${resultColor}66`, marginBottom: '24px' }}>
+              <div className="result-section">
+                <div className={`result-label ${resultColorClass}`}>
                   {resultLabel}
                 </div>
                 
-                <div className="action-buttons" style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <button onClick={handleReset} className="secondary-btn">
+                <div className="action-buttons">
+                  <button onClick={handleReset} className="btn secondary-btn" aria-label="Play Again">
                     <RefreshCw size={16} /> Play Again
                   </button>
-                  <button onClick={handleShare} className="primary-btn share-btn">
+                  <button onClick={handleShare} className="btn primary-btn share-btn" aria-label="Share">
                     <Share2 size={16} /> Share
                   </button>
-                  <button onClick={handleDownload} className="primary-btn download-btn">
+                  <button onClick={handleDownload} className="btn primary-btn download-btn" aria-label="Save Image">
                     <Download size={16} /> Save
                   </button>
                 </div>
@@ -258,15 +258,162 @@ export default function ScratchModal({ match, onClose }) {
         </div>
 
         <style>{`
+          /* Design Tokens & Spacing System */
+          .modal-card {
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            
+            /* Color Palette (Tinted Neutrals & Semantics) */
+            --bg-overlay: rgba(0, 0, 0, 0.85);
+            --bg-surface: oklch(22% 0.015 150);
+            --bg-surface-raised: oklch(28% 0.015 150);
+            --border-subtle: oklch(35% 0.015 150);
+            
+            --text-primary: oklch(98% 0 0);
+            --text-secondary: oklch(75% 0.01 150);
+            
+            --color-win: oklch(70% 0.15 150); /* Emerald */
+            --color-draw: oklch(75% 0.12 80); /* Gold */
+            --focus-ring: oklch(70% 0.15 150 / 50%);
+            
+            --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+          }
+
+          /* Utility & Accessibility */
           .disable-animations, .disable-animations * {
             animation: none !important;
+            transition: none !important;
           }
+
+          /* Layout */
+          .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: var(--space-md);
+            backdrop-filter: blur(8px);
+            animation: overlayFadeIn 0.3s var(--ease-out-quint);
+          }
+
+          .modal-card {
+            background: var(--bg-surface);
+            border-radius: 16px;
+            padding: var(--space-lg) var(--space-md);
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            color: var(--text-primary);
+            font-family: system-ui, -apple-system, sans-serif;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: cardScaleIn 0.4s var(--ease-out-quint);
+          }
+
+          .close-btn {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: 50%;
+            display: flex;
+            transition: all 0.2s var(--ease-out-quint);
+          }
+          .close-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-surface-raised);
+          }
+          .close-btn:focus-visible {
+            outline: 2px solid var(--color-win);
+            outline-offset: 2px;
+          }
+
+          .header-section {
+            text-align: center;
+            margin-bottom: var(--space-md);
+          }
+          .header-section h2 {
+            margin: 0 0 var(--space-xs) 0;
+            font-size: clamp(20px, 5vw, 24px);
+            font-weight: 700;
+          }
+          .header-section p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: capitalize;
+          }
+
+          .team-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            background: var(--bg-surface-raised);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+          }
+          .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-xs);
+          }
+          .team-flag {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .team-crest {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: var(--bg-surface-raised);
+            z-index: 1;
+            border-radius: 50%;
+          }
+          .team-name {
+            font-weight: 600;
+            font-size: clamp(14px, 4vw, 18px);
+            text-align: center;
+          }
+          .vs-divider {
+            font-size: clamp(18px, 5vw, 24px);
+            font-weight: 900;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+          }
+
+          .interactive-area {
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+          }
+
           .goal-btn {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
+            background: linear-gradient(135deg, var(--color-win), oklch(60% 0.15 150));
             color: #fff;
             border: none;
             padding: 20px 48px;
-            font-size: 32px;
+            font-size: clamp(24px, 6vw, 32px);
             font-weight: 900;
             letter-spacing: 4px;
             border-radius: 999px;
@@ -274,8 +421,8 @@ export default function ScratchModal({ match, onClose }) {
             display: inline-flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4), inset 0 4px 10px rgba(255, 255, 255, 0.3);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.2);
+            transition: all 0.3s var(--ease-out-quint);
             position: relative;
             overflow: hidden;
           }
@@ -283,68 +430,79 @@ export default function ScratchModal({ match, onClose }) {
             content: '';
             position: absolute;
             top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s var(--ease-out-quint);
           }
           .goal-btn:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 10px 40px rgba(34, 197, 94, 0.6), inset 0 4px 10px rgba(255, 255, 255, 0.4);
+            transform: scale(1.03) translateY(-2px);
+            box-shadow: 0 12px 40px rgba(16, 185, 129, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.3);
           }
           .goal-btn:hover::before {
             left: 100%;
           }
           .goal-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+            transform: scale(0.97);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
           }
-          .bolt {
-            animation: pulseBolt 1s infinite alternate;
-          }
-          @keyframes pulseBolt {
-            0% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 2px #fff); }
-            100% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 8px #fff); }
+          .goal-btn:focus-visible {
+            outline: 3px solid var(--focus-ring);
+            outline-offset: 4px;
           }
           
-          .scrambler {
-            font-size: 72px;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: -2px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(34, 197, 94, 0.6);
-            animation: jitter 0.1s infinite, glowPulse 0.5s infinite alternate;
-            font-variant-numeric: tabular-nums;
-          }
-          .final-score {
-            font-size: 72px;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: -2px;
-            text-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
-            font-variant-numeric: tabular-nums;
-            animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-          }
-          @keyframes jitter {
-            0% { transform: translate(1px, 1px) scale(1.02); }
-            25% { transform: translate(-1px, -2px) scale(0.98); }
-            50% { transform: translate(-2px, 1px) scale(1.05); }
-            75% { transform: translate(2px, -1px) scale(0.95); }
-            100% { transform: translate(1px, 2px) scale(1); }
-          }
-          @keyframes glowPulse {
-            from { text-shadow: 0 0 20px #22c55e; color: #fff; }
-            to { text-shadow: 0 0 40px #3b82f6, 0 0 80px #3b82f6; color: #e0f2fe; }
-          }
-          @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; filter: blur(10px); }
-            70% { transform: scale(1.1); opacity: 1; filter: blur(0); }
-            100% { transform: scale(1); }
-          }
-          @keyframes fadeInUp {
-            from { transform: translateY(15px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+          .bolt {
+            animation: pulseBolt 2s infinite var(--ease-out-quint);
           }
 
-          .primary-btn, .secondary-btn {
+          .scrambler {
+            font-size: clamp(48px, 12vw, 72px);
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -2px;
+            font-variant-numeric: tabular-nums;
+            /* Replaced jitter with a cleaner slot-machine style blur & color shift */
+            animation: slotScramble 0.15s infinite alternate;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+          }
+
+          .final-score {
+            font-size: clamp(48px, 12vw, 72px);
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -2px;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+            /* Premium reveal replacing the bouncy popIn */
+            animation: premiumReveal 0.6s var(--ease-out-quint) forwards;
+          }
+
+          .result-section {
+            animation: fadeInUp 0.5s var(--ease-out-quint) forwards;
+            text-align: center;
+            margin-top: var(--space-sm);
+            width: 100%;
+          }
+          .result-label {
+            font-size: clamp(20px, 5vw, 24px);
+            font-weight: 900;
+            margin-bottom: var(--space-md);
+          }
+          .result-win {
+            color: var(--color-win);
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+          }
+          .result-draw {
+            color: var(--color-draw);
+            text-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+          }
+
+          .action-buttons {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: center;
+            flex-wrap: wrap;
+          }
+          
+          .btn {
             border: none;
             padding: 10px 20px;
             font-size: 14px;
@@ -353,44 +511,82 @@ export default function ScratchModal({ match, onClose }) {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-weight: bold;
-            transition: all 0.2s;
+            font-weight: 600;
+            transition: all 0.2s var(--ease-out-quint);
+            min-height: 44px; /* Touch target size */
+            justify-content: center;
           }
+          .btn:focus-visible {
+            outline: 2px solid var(--focus-ring);
+            outline-offset: 2px;
+          }
+          
           .primary-btn {
-            background: #3b82f6;
             color: #fff;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-          }
-          .primary-btn:hover {
-            transform: scale(1.05);
-            background: #2563eb;
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-          }
-          .secondary-btn {
-            background: #333;
-            color: #fff;
-            border: 1px solid #555;
-          }
-          .secondary-btn:hover {
-            transform: scale(1.05);
-            background: #444;
-            border-color: #777;
           }
           .share-btn {
             background: #1da1f2;
-            box-shadow: 0 4px 15px rgba(29, 161, 242, 0.3);
+            box-shadow: 0 4px 15px rgba(29, 161, 242, 0.2);
           }
           .share-btn:hover {
             background: #1a91da;
-            box-shadow: 0 6px 20px rgba(29, 161, 242, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(29, 161, 242, 0.3);
           }
           .download-btn {
             background: #8b5cf6;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
           }
           .download-btn:hover {
             background: #7c3aed;
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+          }
+          .secondary-btn {
+            background: var(--bg-surface-raised);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+          }
+          .secondary-btn:hover {
+            background: oklch(35% 0.015 150);
+            border-color: oklch(45% 0.015 150);
+            transform: translateY(-1px);
+          }
+
+          /* Keyframes */
+          @keyframes overlayFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes cardScaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+          }
+          @keyframes pulseBolt {
+            0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255,255,255,0.5)); }
+            50% { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(255,255,255,0.8)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255,255,255,0.5)); }
+          }
+          @keyframes slotScramble {
+            0% { transform: translateY(-2px); filter: blur(1px); opacity: 0.9; }
+            100% { transform: translateY(2px); filter: blur(0px); opacity: 1; }
+          }
+          @keyframes premiumReveal {
+            0% { transform: scale(0.9); filter: blur(8px); opacity: 0; }
+            100% { transform: scale(1); filter: blur(0); opacity: 1; }
+          }
+          @keyframes fadeInUp {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+          }
+
+          /* Accessibility: Reduced Motion */
+          @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+              animation-duration: 0.01ms !important;
+              animation-iteration-count: 1 !important;
+              transition-duration: 0.01ms !important;
+            }
           }
         `}</style>
       </div>
