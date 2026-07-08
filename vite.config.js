@@ -8,9 +8,22 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   process.env = { ...process.env, ...env }
 
+  // 取得 Vercel 提供的系統環境變數 (優先使用自訂正式網域，其次為部署網域)
+  const publicUrl = env.VERCEL_PROJECT_PRODUCTION_URL 
+    ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : env.VERCEL_URL 
+      ? `https://${env.VERCEL_URL}` 
+      : 'http://localhost:5173';
+
   return {
     plugins: [
       react(),
+      {
+        name: 'html-transform',
+        transformIndexHtml(html) {
+          return html.replace(/%PUBLIC_URL%/g, publicUrl);
+        }
+      },
       {
         name: 'vercel-api-middleware',
         configureServer(server) {
