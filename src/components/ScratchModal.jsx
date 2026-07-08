@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { X, RefreshCw, Zap, Download, Share2 } from 'lucide-react';
-import { toPng, toBlob } from 'html-to-image';
 
 const scoreDistribution = [
   { score: '1 - 0', weight: 15 }, { score: '0 - 1', weight: 15 }, { score: '1 - 1', weight: 13 },
@@ -82,6 +81,7 @@ export default function ScratchModal({ match, onClose }) {
         return true;
       };
 
+      const { toPng } = await import('html-to-image');
       const dataUrl = await toPng(cardRef.current, { 
         cacheBust: true, 
         backgroundColor: '#1a1a1a',
@@ -122,6 +122,7 @@ export default function ScratchModal({ match, onClose }) {
           return true;
         };
 
+        const { toBlob } = await import('html-to-image');
         const blob = await toBlob(cardRef.current, { 
           cacheBust: true, 
           backgroundColor: '#1a1a1a',
