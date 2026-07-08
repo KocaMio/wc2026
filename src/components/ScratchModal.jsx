@@ -51,33 +51,7 @@ export default function ScratchModal({ match, onClose }) {
     setFinalScore(null);
   };
 
-  const handleDownload = async () => {
-    if (!cardRef.current) return;
-    try {
-      // Hide buttons temporarily during screenshot
-      const actionButtons = cardRef.current.querySelector('.action-buttons');
-      const closeButton = cardRef.current.querySelector('.close-btn');
-      if (actionButtons) actionButtons.style.display = 'none';
-      if (closeButton) closeButton.style.display = 'none';
 
-      const dataUrl = await toPng(cardRef.current, { 
-        cacheBust: true, 
-        backgroundColor: '#1a1a1a',
-        useCORS: true,
-        allowTaint: true
-      });
-      
-      if (actionButtons) actionButtons.style.display = 'flex';
-      if (closeButton) closeButton.style.display = 'block';
-
-      const link = document.createElement('a');
-      link.download = `WC2026_Prediction_${match.teamA.code}_vs_${match.teamB.code}.png`;
-      link.href = dataUrl;
-      link.click();
-    } catch (err) {
-      console.error('Failed to generate image', err);
-    }
-  };
 
   const handleShare = async () => {
     const text = `🏆 I predict the final score for ${match.teamA.name} vs ${match.teamB.name} will be ${finalScore}!\n\nGenerate your own prediction for the World Cup 2026! ⚽`;
@@ -87,27 +61,7 @@ export default function ScratchModal({ match, onClose }) {
     try {
       let fileToShare = null;
 
-      // 1. Generate the blob image
-      if (cardRef.current) {
-        const actionButtons = cardRef.current.querySelector('.action-buttons');
-        const closeButton = cardRef.current.querySelector('.close-btn');
-        if (actionButtons) actionButtons.style.display = 'none';
-        if (closeButton) closeButton.style.display = 'none';
 
-        const blob = await toBlob(cardRef.current, { 
-          cacheBust: true, 
-          backgroundColor: '#1a1a1a',
-          useCORS: true,
-          allowTaint: true
-        });
-        
-        if (actionButtons) actionButtons.style.display = 'flex';
-        if (closeButton) closeButton.style.display = 'block';
-
-        if (blob) {
-          fileToShare = new File([blob], 'prediction.png', { type: 'image/png' });
-        }
-      }
 
       // 2. Check if share with files is supported
       if (navigator.share && fileToShare && navigator.canShare && navigator.canShare({ files: [fileToShare] })) {
@@ -215,9 +169,6 @@ export default function ScratchModal({ match, onClose }) {
                   </button>
                   <button onClick={handleShare} className="primary-btn share-btn">
                     <Share2 size={16} /> Share
-                  </button>
-                  <button onClick={handleDownload} className="primary-btn download-btn">
-                    <Download size={16} /> Save
                   </button>
                 </div>
               </div>
