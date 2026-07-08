@@ -73,7 +73,7 @@ const MatchNode = ({ data }) => {
       <Handle type="target" position={Position.Left} style={{ background: theme.border, width: '8px', height: '8px', border: 'none' }} />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '13px', color: isFinished ? '#444' : '#94a3b8' }}>
-        <span>Match {match.id}</span>
+        <span></span>
         <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: theme.status, fontWeight: isLive ? 'bold' : 'normal' }}>
           {isFinished ? <CheckCircle size={14} /> : isLive ? <Clock size={14} className="animate-pulse" /> : <Lock size={14} />}
           {isFinished ? 'Finished' : isLive ? 'Live' : 'Upcoming'}
