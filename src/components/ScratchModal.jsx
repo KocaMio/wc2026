@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, RefreshCw, Zap, Download, Share2 } from 'lucide-react';
+import { X, RefreshCw, Download, Share2 } from 'lucide-react';
 
 const scoreDistribution = [
   { score: '1 - 0', weight: 15 }, { score: '0 - 1', weight: 15 }, { score: '1 - 1', weight: 13 },
@@ -216,7 +216,7 @@ export default function ScratchModal({ match, onClose }) {
               className="goal-btn"
               aria-label="Reveal Prediction"
             >
-              <Zap size={24} className="bolt" />
+              <span className="bolt" style={{ fontSize: '24px' }}>⚽</span>
               <span>GOAL</span>
             </button>
           )}
